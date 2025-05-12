@@ -36,21 +36,31 @@ print(full_schema_prompt)
 
 # Costruzione del Conversational Agent con contesto semantico
 conversational_agent = build_conversational_agent(full_schema_prompt)
+last_semantic_prompt = None # <-- AGGIUNTA per memoria semplice
 
 while True:
     print("\n-----------------------------------------")
     user_input = input("\n🤖 Inserisci qui la domanda 🤖 : ")
+
+    # AGGIUNTA: costruzione input combinato per follow-up
+    if last_semantic_prompt:
+        combined_input = f"Domanda precedente:\n{last_semantic_prompt}\n\nNuova richiesta:\n{user_input}"
+    else:
+        combined_input = user_input
+
 
     # Step 1 – Comprensione della richiesta
     response_doc = client.run(
         agent=conversational_agent,
         messages=[{
             "role": "user",
-            "content": user_input
+            "content": combined_input
         }]
     )
     semantic_prompt = response_doc.messages[-1]["content"]
     print("[INFO] Prompt strutturato generato dal Document Agent:\n", semantic_prompt)
+
+    last_semantic_prompt = semantic_prompt
 
     # Step 2 – Traduzione in prompt naturale
     response_prompt = client.run(

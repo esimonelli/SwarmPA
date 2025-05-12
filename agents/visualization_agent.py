@@ -64,6 +64,18 @@ Generare **solo codice Python funzionante** che crei una visualizzazione coerent
 - Usa colori armoniosi (es. `skyblue`, `salmon`)
 - Rotazione delle etichette leggibile (`rotation=30` o `45`, `ha='right'`)
 
+🎨 Se l’analisi prevede correlazioni multiple o più scatterplot, crea un'immagine con `plt.subplots()`.
+-Esempio: 2x2 grafici su colonne numeriche.
+-Se più colonne → usa `correlation matrix`, usa `sns.heatmap(df.corr(), annot=True)`.
+-Se confronto 1:1  usa `sns.scatterplot(x=..., y=...)`.
+-Se ci sono più scatter richiesti → crea griglia con `plt.subplots()`
+-- Titola bene i plot con “Relazione tra X e Y” e salva sempre tutto in 'images/output_visualization.png'
+
+📐 Formato immagine obbligatorio:
+- Indipendentemente dal numero di grafici (singolo, 2, 5 o 10 subplot), imposta sempre:
+  `plt.figure(figsize=(20, 6))` oppure `fig, axs = plt.subplots(..., figsize=(20, 6))`
+- NON modificare dinamicamente la dimensione dell'immagine
+
 📄 Output atteso:
 - Solo **codice Python valido**
 - Nessun testo, commento o markdown

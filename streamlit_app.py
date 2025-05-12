@@ -3,7 +3,7 @@ import os
 import base64
 from swarm_interface import SwarmAgentSystem
 
-st.set_page_config(page_title="Swarm Multi-Agent – PA Italiana", layout="wide", page_icon="📊")
+st.set_page_config(page_title="(Demo) Multi-Agent NoiPA", layout="wide", page_icon="📊")
 
 # Logo opzionale (assicurati che sia presente il file Logo_Reply.png)
 logo_path = "Logo_Reply.png"
@@ -16,23 +16,22 @@ else:
 # Stili globali
 st.markdown(f"""
 <style>
-    :root {{ color-scheme: dark; }}
     html, body, [class*="css"] {{
         font-family: 'Segoe UI', sans-serif;
-        background-color: #0e1117 !important;
-        color: #f5f5f5 !important;
+        background-color: #f0f0f0 !important;
+        color: #111111 !important;
     }}
     .header-container {{
         display: flex; align-items: center; justify-content: space-between;
         margin-bottom: 1.5rem;
     }}
-    .main-title {{ font-size: 2.3em; font-weight: 800; color: #ffffff; margin: 0; }}
+    .main-title {{ font-size: 3em; font-weight: 800; color: #3498db; margin: 0; }}
     .logo-img {{ height: 60px; margin-left: 20px; }}
-    .subheader {{ font-size: 1.2em; color: #cfcfcf; margin-bottom: 1.8em; }}
+    .subheader {{ font-size: 1.4em; color: #3498db; margin-bottom: 1.8em; }}
     .user-msg, .agent-msg {{
-        background-color: #1c1c1c; padding: 1.2em; border-radius: 12px;
-        margin: 0.6em 0; box-shadow: 0 2px 8px rgba(255,255,255,0.1);
-        color: #f1f1f1; font-size: 1.05em;
+        background-color: #ffffff; padding: 1.2em; border-radius: 12px;
+        margin: 0.6em 0; box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        color: #111111; font-size: 1.05em;
     }}
     .user-msg {{ border-left: 5px solid #3498db; }}
     .agent-msg {{ border-left: 5px solid #2ecc71; }}
@@ -44,12 +43,12 @@ st.markdown(f"""
     .download-btn:hover {{ background-color: #1f8e4d; }}
 </style>
 <div class="header-container">
-    <div class="main-title">🧠 Swarm Multi-Agent – Analisi PA Italiana</div>
+    <div class="main-title">NoiPA Multi-Agent – Analisi PA Italiana</div>
     <img class="logo-img" src="data:image/png;base64,{logo_reply}">
 </div>
 """, unsafe_allow_html=True)
 
-st.markdown("<div class='subheader'>Analizza i dati della PA in linguaggio naturale: <b>Stipendi</b>, <b>Redditi</b>, <b>Accessi</b>, <b>Pendolarismo</b></div>", unsafe_allow_html=True)
+st.markdown("<div class='subheader'>Sistema Multi-Agent capace di analizzare dati della PA in linguaggio naturale: <b>Stipendi</b>, <b>Redditi</b>, <b>Accessi</b>, <b>Pendolarismo</b></div>", unsafe_allow_html=True)
 
 if "swarm_agent" not in st.session_state:
     st.session_state.swarm_agent = SwarmAgentSystem()
@@ -92,7 +91,7 @@ for entry in st.session_state.chat_history:
         if entry["type"] == "visualization" and entry.get("image"):
             with open(entry["image"], "rb") as img_file:
                 b64 = base64.b64encode(img_file.read()).decode()
-                href = f'<a class="download-btn" href="data:image/png;base64,{b64}" download="grafico_generato.png">Scarica il grafico</a>'
+                href = f'<a class="download-btn" style="color: black;" href="data:image/png;base64,{b64}" download="grafico_generato.png">Scarica il grafico</a>'
                 st.markdown(f"<div style='text-align: center'>{href}</div>", unsafe_allow_html=True)
 
 st.markdown("""

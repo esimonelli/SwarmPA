@@ -65,7 +65,7 @@ class SwarmAgentSystem:
             dataframe_result = execute_code(generated_code)
 
             if dataframe_result is None:
-                return {"message": "❌ Nessun risultato disponibile.", "type": "text"}
+                return {"message": "Nessun risultato disponibile. Assicurati di aver formulato bene la domanda o in caso la domanda è stata ben formulata riprova, qualcosa potrebbe essere andato storto.", "type": "text"}
 
             # Step 4: Visualizzazione (opzionale)
             image_path = None
