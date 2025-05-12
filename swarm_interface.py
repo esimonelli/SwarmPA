@@ -1,0 +1,123 @@
+from swarm import Swarm
+from agents.data_agent import build_data_agent
+from agents.conversational_agent import build_conversational_agent
+from agents.prompt_engine import prompt_engine
+from agents.visualization_agent import visualization_agent
+from agents.explanation_agent import explanation_agent
+from utils.csv_schema import generate_dataset_schema
+from utils.index_builder import build_or_load_index
+from utils.executor import execute_code
+from utils.llama_helper import extract_semantic_schema_from_index
+import os
+
+
+class SwarmAgentSystem:
+    def __init__(self):
+        self.client = Swarm()
+        self.index = build_or_load_index(dataset_path="datasets", persist_dir="index", force=False)
+        self.metadata_prompt = generate_dataset_schema()
+        self.semantic_context = extract_semantic_schema_from_index()
+
+        full_schema_prompt = f"""
+[INFO] Metadati tecnici dei dataset:
+{self.metadata_prompt}
+
+[INFO] Contesto semantico estratto da LlamaIndex:
+{self.semantic_context}
+"""
+
+        self.conversational_agent = build_conversational_agent(full_schema_prompt)
+        self.data_agent = build_data_agent(self.metadata_prompt)
+
+    def process_query(self, user_input):
+        try:
+            # Step 1: Prompt strutturato
+            response_doc = self.client.run(
+                agent=self.conversational_agent,
+                messages=[{"role": "user", "content": user_input}]
+            )
+            semantic_prompt = response_doc.messages[-1]["content"]
+
+            # Step 2: Prompt naturale
+            response_prompt = self.client.run(
+                agent=prompt_engine,
+                messages=[{"role": "user", "content": f"""
+[USER INPUT]:
+{user_input}
+
+[STRUCTURED PROMPT]:
+{semantic_prompt}
+"""}]
+            )
+            natural_instruction = response_prompt.messages[-1]["content"].strip()
+            needs_visualization = "grafico" in natural_instruction.lower()
+
+            # Step 3: Codice Python
+            response_data = self.client.run(
+                agent=self.data_agent,
+                messages=[{"role": "user", "content": natural_instruction}]
+            )
+            generated_code = response_data.messages[-1]["content"].strip()
+
+            if generated_code.startswith("```"):
+                generated_code = "\n".join(line for line in generated_code.splitlines() if not line.strip().startswith("```"))
+
+            dataframe_result = execute_code(generated_code)
+
+            if dataframe_result is None:
+                return {"message": "❌ Nessun risultato disponibile.", "type": "text"}
+
+            # Step 4: Visualizzazione (opzionale)
+            image_path = None
+            viz_code = None
+            if needs_visualization:
+                os.makedirs("images", exist_ok=True)
+                viz_input = f"""
+[Prompt utente]:
+{natural_instruction}
+
+[Output dati del Data Agent]:
+{dataframe_result}
+
+[Codice generato dal Data Agent]:
+{generated_code}
+"""
+                response_viz = self.client.run(
+                    agent=visualization_agent,
+                    messages=[{"role": "user", "content": viz_input}]
+                )
+                viz_code = response_viz.messages[-1]["content"].strip()
+
+                if viz_code.startswith("```"):
+                    viz_code = "\n".join(line for line in viz_code.splitlines() if not line.strip().startswith("```"))
+
+                exec(viz_code)
+                image_path = "images/output_visualization.png"
+
+            # Step 5: Spiegazione finale
+            explain_input = f"""
+[Prompt utente]:
+{natural_instruction}
+
+[Output dati del Data Agent]:
+{dataframe_result}
+
+[Codice eseguito dal Data Agent]:
+{generated_code}
+
+[Codice visualizzazione]:
+{viz_code if viz_code else ''}
+"""
+            response_exp = self.client.run(
+                agent=explanation_agent,
+                messages=[{"role": "user", "content": explain_input}]
+            )
+
+            return {
+                "message": response_exp.messages[-1]["content"],
+                "type": "visualization" if image_path else "text",
+                "image_path": image_path
+            }
+
+        except Exception as e:
+            return {"message": f"Errore: {str(e)}", "type": "text"}
