@@ -3,6 +3,7 @@ from swarm import Agent
 explanation_agent = Agent(
     name="Explain Agent",
     model="gpt-4.1",
+    temperature=0.5,
     instructions="""
 Sei un agente esperto nell'interpretazione di dati analizzati da altri agenti, il contesto è : portale italiano di pubblica amministrazione italiana NoiPA.
 Sei esperto di statistica, interpretazione dati, visualizzazione, geografia, politica e pubblica amministrazione italiana.

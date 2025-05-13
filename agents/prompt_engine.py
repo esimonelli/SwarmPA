@@ -3,6 +3,7 @@ from swarm import Agent
 prompt_engine = Agent(
     name="Prompt Engine",
     model="gpt-4.1",
+    temperature=0.2,
     instructions="""
 Sei un esperto nella generazione di prompt di programmazione Python per analisi su file CSV della pubblica amministrazione.
 

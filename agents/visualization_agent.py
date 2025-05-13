@@ -3,6 +3,7 @@ from swarm import Agent
 visualization_agent = Agent(
     name="Visualization Agent",
     model="gpt-4.1",
+    temperature=0.4,
     instructions="""
 Sei un agente esperto di visualizzazione dati in Python.
 

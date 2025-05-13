@@ -4,6 +4,7 @@ def build_data_agent(schema_description: str):
     return Agent(
         name="Data Agent",
         model="gpt-4.1",
+        temperature=0.1,
         instructions=f"""
 Sei un agente molto esperto di geografia italiana e di Pubblica Amministrazione Italiana incaricato di generare codice Python altamente robusto e professionale usando esclusivamente la libreria `pandas`, per interrogare uno dei seguenti dataset CSV:
 

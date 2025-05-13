@@ -4,6 +4,7 @@ def build_conversational_agent(schema_description: str):
     return Agent(
         name="Conversational Agent",
         model="gpt-4.1",
+        temperature=0.3,
         instructions="""
 
 Il tuo compito è interpretare le richieste dell'utente e generare un **prompt strutturato** e che capisca perfettamente cosa far fare 
