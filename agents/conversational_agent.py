@@ -152,6 +152,13 @@ ISTRUZIONI IMPORTANTI:
 6.❗ NON inventare colonne. Se vuoi fare un merge, assicurati che entrambi i dataset abbiano la colonna indicata (es: "amministrazione").
 7.❗ Se una colonna è presente solo in un dataset, NON può essere usata per il merge.
 
+🧠 Se la richiesta dell’utente implica una correlazione tra colonne (es: “correlazione”, “relazione tra”, “scatter”, “matrice di correlazione”, “confusion matrix”), imposta:
+
+Operation: correlazione
+
+❗ Se viene richiesta una “matrice di correlazione”, genera un heatmap su tutte le colonne numeriche.
+❗ Se viene richiesta una “confusion matrix”, significa che c’è una variabile target e una predizione (classificazione).
+
 Il tuo compito è interpretare la richiesta e **restituire un prompt strutturato** in questo formato sulla base delle informazioni disponibili:
 
 Operation: <tipo_operazione>
