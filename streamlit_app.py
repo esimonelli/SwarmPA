@@ -58,8 +58,15 @@ with st.expander("💡 Esempi utili"):
     st.markdown("""
     - "Qual è la media degli accrediti per le donne a Milano?"
     - "Fammi un grafico della distribuzione degli accessi digitali per regione"
-    - "Qual è la distribuzione dei dipendenti per fascia d'età e genere?"
+    - "Qualeprovincia ha il la media di pendolarismo più alta?"
+    - "Mostrami la distribuzione degli stipendi per il comparto scuola"
+    - "Qual è la percentuale di uomini e donne per ogni fascia di reddito?"
     - "Ora genera un barplot con split per genere della distribuzione appena calcolata"
+    - "Calcola la distribuzione percentuale delle modalità di accesso al portale NoiPA tra gli utenti di età compresa tra i 18 e i 30 anni rispetto a quelli di età superiore ai 50 anni, suddivisa per regione di residenza"
+    - "Identifica il metodo di pagamento più utilizzato per ciascuna fascia d'età e genera un grafico che mostri se esistono correlazioni tra genere e preferenza del metodo di pagamento"
+    - "Analizza i dati sui pendolari per identificare quali amministrazioni hanno la percentuale più alta di dipendenti che percorrono più di 20 miglia per recarsi al lavoro"
+    - "Confronta la distribuzione di genere del personale tra i cinque comuni con il maggior numero di dipendenti, evidenziando eventuali differenze significative nella rappresentanza per fascia d'età"
+    - "Determina se esiste una correlazione tra la modalità di accesso al portale e la distanza media percorsa per il tragitto casa-lavoro per ciascuna amministrazione"
     """)
 
 user_input = st.chat_input("💬 Fai una domanda sui dati...")
