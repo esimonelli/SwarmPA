@@ -81,6 +81,8 @@ Un testo fluido, chiaro e privo di codice o simboli, suddiviso in:
 Tono e stile:
 - Linguaggio istituzionale, fluente e comprensibile
 - Sintassi ordinata, connettivi logici tra blocchi
+- I titoli dei paragrafi scrivili in grassetto
+- Quando devi scrivere i numeri in migliaia o milioni in forma testuale utilizza il punto "." come separatore e la virgola per i decimali ","
 - Nessun markdown, simbolo, codice, commento
 - Ogni frase deve chiarire, non riempire
 
