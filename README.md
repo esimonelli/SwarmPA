@@ -1,4 +1,8 @@
-# SwarmPA: Multi-Agent System for Public Administration Data
+<p align="center">
+  <img src="images/Titolo.png" alt="SwarmPA Banner" width="100%">
+</p>
+
+
 
 ## Team Members
 - **Chiara Canali** – Team Captain (ID: 800xxx)
@@ -8,7 +12,7 @@
 **Master’s Degree in Data Science and Management**  
 LUISS Guido Carli – A.Y. 2024/2025
 
-## Introduction
+# 1 - Introduction
 
 SwarmPA is a multi-agent system developed as part of the Machine Learning course (A.Y. 2024/2025) at LUISS Guido Carli, in collaboration with Reply SpA. The project addresses a real-world challenge in the public sector: enabling intuitive, efficient, and explainable access to complex datasets from the Italian Public Administration (PA). These datasets contain rich, granular information about salary distributions, commuting patterns, income brackets, and digital access behaviors of public employees. However, navigating such data typically requires technical expertise and familiarity with programming tools—skills that most public sector workers do not possess.
 
@@ -28,13 +32,13 @@ The complete analysis pipeline is as follows:
 
 SwarmPA is therefore not just a question-answering tool, but a **cooperative intelligence system**, capable of transforming an open-ended request into structured, interpretable insights—both textual and visual. It combines the transparency of agent-based software with the power of modern language models, making it a powerful assistant for data-analysis and data-driven decision making in the public sector.
 
-## Methods
+# 2 - Methods
 
 The architecture of SwarmPA is based on a modular **multi-agent system**, where each component (agent) is responsible for a specialized task. The communication between agents is handled exclusively through structured natural language prompts, orchestrated by the Swarm framework. This modular structure ensures a clear separation of responsibilities, maximizes reusability, and exploits the full potential of LLMs in a robust and scalable way.
 
-The system relies on five agents plus an execution environment:
+The system relies on five agents plus an execution tool:
 
-### 🧠 Conversational Agent
+### Conversational Agent
 - **Model**: `gpt-4.1`
 - **Temperature**: `0.3`
 - **Prompt**: Translates user natural language queries into a formal semantic schema aligned with dataset metadata.
@@ -42,51 +46,87 @@ The system relies on five agents plus an execution environment:
 - **Indexing**: At startup, the system invokes a `build_or_load_index()` method that creates (or retrieves) an index of all uploaded CSVs. This index captures column names, value distributions, and textual characteristics, allowing for contextual disambiguation of ambiguous queries (e.g., resolving "regione" to the correct field).
 - **Metadata schema**: Generated via `generate_dataset_schema()`, used to inform all agents of the structure of the data.
 
-### 🔧 Prompt Engine
+### Prompt Engine
 - **Model**: `gpt-4.1`
 - **Temperature**: `0.2`
 - **Prompt**: Converts the semantic prompt into a clean, formal instruction in natural language, suitable for code generation.
 - **Function**: Acts as the central interpreter between understanding and execution, making prompts clearer and executable. By explicitly separating this phase, the system gains **control, transparency, and consistency** in how analysis requests are passed to code-generating agents.
 - **Impact**: This agent represents a major evolution in the architecture compared to the old system.
 
-### 📊 Data Agent
+### Data Agent
 - **Model**: `gpt-4.1`
 - **Temperature**: `0.1` (lowest, for determinism)
 - **Prompt**: Strict instruction to generate only valid, executable Python code using `pandas`, `numpy`, etc., without any text or markup.
 - **Function**: Converts instructions into working code. Handles filtering, aggregation, joins, value counts, and even complex statistical operations. Ensures output is always printed and saved into the variable `result`.
 
-### 🖼 Visualization Agent
+### Visualization Agent
 - **Model**: `gpt-4.1`
 - **Temperature**: `0.4`
 - **Prompt**: Generates Python code for creating visualizations from the resulting data (`dataframe_result`), using `matplotlib` and `seaborn`.
 - **Function**: Dynamically determines the appropriate graph type (barplot, pie, heatmap, etc.) and saves it to `images/output_visualization.png`.
 - **Trigger**: Activated only if the prompt contains visual keywords (e.g., “grafico”, “chart”).
 
-### 📘 Explanation Agent
+### Explanation Agent
 - **Model**: `gpt-4.1`
 - **Temperature**: `0.5`
 - **Prompt**: Expert-level explanation template that synthesizes numeric, tabular, or visual data into a structured and institutionally styled summary.
 - **Function**: Provides fluent and coherent final answers. Integrates numerical interpretation, ranking, comparisons, and references to attached visualizations.
 
-### ⚙️ Executor
+### Executor
 - **Function**: A secure Python environment that executes dynamically generated code and returns the result (`result`, `dataframe`, or image).
 - **Mechanism**: Uses a `try/except` block to trap execution errors and returns structured objects to be post-processed.
 
 ---
-### System Components
+## Environment Setup
 
-- **Language Model**: `gpt-4.1` (OpenAI)
-- **Framework**: Swarm (OpenAI)
-- **Visualization**: `matplotlib`, `seaborn`
-- **Data Processing**: `pandas`, `numpy`
-- **Environment**: Streamlit (for web interface)
-- **Language**: Python 3.11
+
+To ensure full reproducibility and clarity, this section outlines the setup instructions and the overall code structure of the system.
+
+
+The project requires Python 3.10+ and can be set up using either `conda` or a standard `venv` with `pip`. Below are both recommended methods:
+
+#### Option 1: Using Conda (recommended)
+
+    conda env create -f environment.yml
+    conda activate swarmpa
+
+To export your environment for future use:
+
+    conda env export > environment.yml
+
+#### Option 2: Using Virtualenv + requirements.txt
+
+    python3 -m venv .venv
+    source .venv/bin/activate  # On Windows: .venv\Scripts\activate
+    pip install -r requirements.txt
+
+> API keys such as OpenAI's should be stored in a `.env` file and loaded automatically using the `python-dotenv` package.
 
 ---
 
+### Project Structure and Core Files
+
+The system follows a clean and modular organization. The two core scripts are:
+
+- `main.py`  
+  This is the system's entry point. It instantiates the `SwarmAgentSystem` class and starts an interactive console interface. Running this script launches the entire multi-agent pipeline from user query to structured output (including code generation, execution, and explanation, optionally with a visual chart).
+
+- `swarm_interface.py`  
+  This file contains the logic of the main agent controller. It defines the `SwarmAgentSystem` class, manages the semantic context, builds the metadata prompts, and orchestrates the sequential interaction between agents using Swarm's internal client. It encapsulates the high-level system workflow in the `process_query()` method.
+
+Other important components of the repository include:
+
+- `agents/`: contains all agent builders and configuration (conversational, data, prompt engine, visualization, explanation).
+- `utils/`: includes modules for code execution (`executor.py`), schema generation, indexing, and prompt loaders.
+- `prompts/`: directory containing all agent-specific prompt files, written and tuned for agent specialization and semantic control.
+- `datasets/`: directory containing the CSV files from the Italian public administration used for analysis.
+- `images/`: stores all generated visualizations.
+
+This structure is designed to separate concerns cleanly: orchestration, agent logic, execution, and resource configuration are all modular and extensible. It also aligns with agentic AI best practices, where prompt-based logic is decoupled from orchestration and execution.
+
 ### Workflow Diagram
 
-The figure below illustrates the complete workflow from input to output:
+The figure below provides a detailed illustration of the entire workflow, from input to output, precisely reflecting all the data exchanges and interactions among the components of the architecture, as defined in the `SwarmAgentSystem` within the orchestration code `swarm_interface.py`:
 
 ![Workflow Diagram](images/Work-Flow.png)
 
@@ -104,7 +144,7 @@ The figure below illustrates the complete workflow from input to output:
 
 ### User Interface
 
-The system is accessible through a user-friendly web interface built with Streamlit (https://triple3-rfr6bswwrbu2wpqfgwvwag.streamlit.app/). Users can input their queries in natural language and receive instant feedback:
+The system is accessible through a user-friendly web interface built with Streamlit (https://triple3-rfr6bswwrbu2wpqfgwvwag.streamlit.app/). Users can input their queries in natural language and receive instant feedbacks:
 
 ![User Interface](images/streamlit.png)
 ![User Interface](images/streamlit2.png)
@@ -113,7 +153,7 @@ The interface provides a chat-like experience, allowing users to interact with t
 
 ---
 
-### Datasets
+### Datasets Focus
 
 The system is designed to work with four representative datasets from the Italian Public Administration:
 1. **Salaries**: Aggregated salary data, including payment methods, administrative offices, demographics, and municipalities.
@@ -142,9 +182,10 @@ The development of SwarmPA was preceded by an earlier architecture based on **La
 - **Tight coupling**: Most components were manually interconnected, which made debugging and extension harder.
 - **Prompt generation and flow were interleaved**, which made the system more fragile under ambiguous queries.
 
-These limitations—especially in scalability and semantic transparency—motivated the transition to the **Swarm framework**, where each component is an LLM-powered prompt agent, and communication between parts is entirely **prompt-based**.
+These limitations—especially regarding scalability, transparency of logic, and modularity—combined with our relative inexperience and the desire to build a system that is easier to understand, maintain, and extend, led us to adopt the **Swarm framework** as the final architecture. With Swarm, each component becomes an independent LLM-powered agent, and the entire flow is governed by well-defined natural language prompts. This not only maximizes the interpretability of the system, but also allows us to fully exploit the reasoning capabilities of large language models in a modular and controlled way.
 
-**Key improvements in the SwarmPA architecture:**
+
+### Key improvements in the SwarmPA architecture:
 - Fully decoupled modules
 - Transparent and inspectable communication via text prompts
 - Easier to debug, extend, and control
