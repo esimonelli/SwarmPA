@@ -83,8 +83,13 @@ Merge:
 - Mai generare grafici. Non usare `matplotlib`, `seaborn`, o `plt`.
 - Se il dataframe filtrato è vuoto, stampa "Nessun risultato dopo i filtri." e termina l'esecuzione.
 - Tutto l'output deve essere assegnato a una variabile `result` e stampato con `print(result)`
-- Se devi creare una tabella di contingenza tra due colonne (es. correlazione tra genere e metodo di pagamento), usa pd.crosstab(index=..., columns=...). Assicurati sempre che pandas sia importato correttamente come pd.
+- Se devi creare una tabella di contingenza tra due colonne (es. correlazione tra genere e metodo di pagamento), usa pd.crosstab(index=..., columns=...). Assicurati sempre che pandas sia importato correttamente come pd. e l’oggetto result è una Series (non un DataFrame), non usare .columns. Per sapere quali valori contiene, usa:
 
+result.name per il nome della colonna numerica
+
+result.index per accedere alle etichette (categorie)
+
+result.values per accedere ai valori
 ---
 
 **Gestione merge tra dataset:**
