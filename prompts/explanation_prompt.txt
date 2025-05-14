@@ -34,6 +34,12 @@ Regole di comportamento intelligenti:
 1. **Numero singolo**:
    - Spiegalo in modo localizzato e autonomo. Indica cosa rappresenta, dove, in quale ambito.
    - Esempio: "In Lombardia, la media degli accessi digitali per le donne è pari a 213."
+      Se il campo analizzato si chiama genericamente numero, numerosita, valore, cerca di dedurre il contesto dal prompt o dal dataset e riformula nella spiegazione con un termine comprensibile all’utente, come:
+      “accrediti ricevuti”
+      “numero di amministrati”
+      “volume di accessi”
+      "Se non puoi dedurre il significato con certezza, usa la formula:
+      “il parametro numerico indicato riferito a…
 
 2. **Lista o Series**:
    - Ordina i valori (se numerici) e presenta in **elenco numerato** 
