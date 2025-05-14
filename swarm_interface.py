@@ -29,12 +29,16 @@ class SwarmAgentSystem:
         self.conversational_agent = build_conversational_agent(full_schema_prompt)
         self.data_agent = build_data_agent(self.metadata_prompt)
 
-    def process_query(self, user_input):
+    def process_query(self, user_input, previous_prompt=None):
+        if previous_prompt:
+            combined_input = f"Domanda precedente:\n{previous_prompt}\n\nNuova richiesta:\n{user_input}"
+        else:
+            combined_input = user_input
         try:
             # Step 1: Prompt strutturato
             response_doc = self.client.run(
                 agent=self.conversational_agent,
-                messages=[{"role": "user", "content": user_input}]
+                messages=[{"role": "user", "content": combined_input}]
             )
             semantic_prompt = response_doc.messages[-1]["content"]
 
@@ -63,6 +67,25 @@ class SwarmAgentSystem:
                 generated_code = "\n".join(line for line in generated_code.splitlines() if not line.strip().startswith("```"))
 
             dataframe_result = execute_code(generated_code)
+
+            if dataframe_result is None or (hasattr(dataframe_result, 'empty') and dataframe_result.empty):
+                print("Nessun risultato. Riprovo a elaborare nuovamente.")
+
+            retry_input = f"{user_input}\n\n[NOTA: primo tentativo fallito. Riscrivi la richiesta in forma più generica o semplificata mantenendo il significato.]"
+    
+            # Conversational Agent rigenera 
+            response_retry = self.client.run(agent=self.conversational_agent, messages=[{"role": "user", "content": retry_input}])
+            structured_retry = response_retry.messages[-1]["content"]
+
+            # Prompt Engine rigenera
+            response_retry_prompt = self.client.run(agent=prompt_engine, messages=[{"role": "user", "content": structured_retry}])
+            natural_retry = response_retry_prompt.messages[-1]["content"]
+
+            # Data Agent rigenera codice
+            response_data_retry = self.client.run(agent=self.data_agent, messages=[{"role": "user", "content": natural_retry}])
+            retry_code = response_data_retry.messages[-1]["content"]
+            dataframe_result = execute_code(retry_code)
+
 
             if dataframe_result is None:
                 return {"message": "Nessun risultato disponibile. Assicurati di aver formulato bene la domanda o in caso la domanda è stata ben formulata riprova, qualcosa potrebbe essere andato storto.", "type": "text"}
@@ -121,3 +144,22 @@ class SwarmAgentSystem:
 
         except Exception as e:
             return {"message": f"Errore: {str(e)}", "type": "text"}
+
+    def run_console(self):
+        last_semantic_prompt = None
+
+        while True:
+            print("\n-----------------------------------------")
+            user_input = input("\n🤖 Inserisci qui la domanda 🤖 : ")
+
+            if last_semantic_prompt:
+                combined_input = f"Domanda precedente:\n{last_semantic_prompt}\n\nNuova richiesta:\n{user_input}"
+            else:
+                combined_input = user_input
+
+            result = self.process_query(combined_input)
+            last_semantic_prompt = combined_input
+
+            if result["type"] == "visualization" and result.get("image_path"):
+                print("[🖼] Grafico salvato in:", result["image_path"])
+            print("\n🧠 Risposta:\n", result["message"])
