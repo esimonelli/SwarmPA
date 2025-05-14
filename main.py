@@ -1,4 +1,5 @@
 from swarm import Swarm
+from swarm_interface import SwarmAgentSystem
 from dotenv import load_dotenv
 from agents.data_agent import build_data_agent
 from agents.conversational_agent import build_conversational_agent
@@ -10,7 +11,6 @@ from agents.prompt_engine import prompt_engine
 from agents.visualization_agent import visualization_agent
 from agents.explanation_agent import explanation_agent
 import os
-from swarm_interface import SwarmAgentSystem
 
 
 if __name__ == "__main__":
