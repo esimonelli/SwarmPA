@@ -8,7 +8,9 @@ from utils.csv_schema import generate_dataset_schema
 from utils.index_builder import build_or_load_index
 from utils.executor import execute_code
 from utils.llama_helper import extract_semantic_schema_from_index
+from langdetect import detect
 import os
+
 
 
 class SwarmAgentSystem:
@@ -30,6 +32,7 @@ class SwarmAgentSystem:
         self.data_agent = build_data_agent(self.metadata_prompt)
 
     def process_query(self, user_input, previous_prompt=None):
+        user_language = detect(user_input)[:2]  # → 'en' or 'it'
         if previous_prompt:
             combined_input = f"Domanda precedente:\n{previous_prompt}\n\nNuova richiesta:\n{user_input}"
         else:
@@ -45,16 +48,20 @@ class SwarmAgentSystem:
             # Step 2: Prompt naturale
             response_prompt = self.client.run(
                 agent=prompt_engine,
-                messages=[{"role": "user", "content": f"""
+                messages=[
+                    {"role": "system", "content": f"language: {user_language}"},
+                    {"role": "user", "content": f"""
 [USER INPUT]:
 {user_input}
 
 [STRUCTURED PROMPT]:
 {semantic_prompt}
-"""}]
-            )
+"""}
+    ]
+    )
             natural_instruction = response_prompt.messages[-1]["content"].strip()
-            needs_visualization = "grafico" in natural_instruction.lower()
+            print("Natural Instruction:", natural_instruction)
+            needs_visualization = "grafico" or "visualizza" or "graph" or "visualize" in natural_instruction.lower()
 
             # Step 3: Codice Python
             response_data = self.client.run(
@@ -102,7 +109,7 @@ class SwarmAgentSystem:
 [Output dati del Data Agent]:
 {dataframe_result}
 
-[Codice generato dal Data Agent]:
+[Codice generato dal Data Agent (solo contesto)]:
 {generated_code}
 """
                 response_viz = self.client.run(
@@ -119,22 +126,29 @@ class SwarmAgentSystem:
 
             # Step 5: Spiegazione finale
             explain_input = f"""
-[Prompt utente]:
+[Prompt Engine]:
 {natural_instruction}
 
 [Output dati del Data Agent]:
 {dataframe_result}
 
-[Codice eseguito dal Data Agent]:
+[Codice eseguito dal Data Agent (come contesto)]:
 {generated_code}
 
-[Codice visualizzazione]:
-{viz_code if viz_code else ''}
+[Codice visualizzazione( come contesto)]:
+{viz_code if viz_code else ''}:
+
+[Language]:
+{user_language}
 """
             response_exp = self.client.run(
                 agent=explanation_agent,
-                messages=[{"role": "user", "content": explain_input}]
+                messages=[
+                {"role": "system", "content": f"language: {user_language}"},
+                {"role": "user", "content": explain_input}
+                ]
             )
+
 
             return {
                 "message": response_exp.messages[-1]["content"],

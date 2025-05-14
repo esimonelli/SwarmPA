@@ -83,18 +83,11 @@ The system relies on five agents plus an execution tool:
 To ensure full reproducibility and clarity, this section outlines the setup instructions and the overall code structure of the system.
 
 
-The project requires Python 3.10+ and can be set up using either `conda` or a standard `venv` with `pip`. Below are both recommended methods:
+The project requires Python 3.10+ and can be set up using `venv` with `pip` and install all the requirements needed (`requirements.txt`). Below the instructions:
 
-#### Option 1: Using Conda (recommended)
 
-    conda env create -f environment.yml
-    conda activate swarmpa
 
-To export your environment for future use:
-
-    conda env export > environment.yml
-
-#### Option 2: Using Virtualenv + requirements.txt
+#### Set Virtualenv and install requirements
 
     python3 -m venv .venv
     source .venv/bin/activate  # On Windows: .venv\Scripts\activate

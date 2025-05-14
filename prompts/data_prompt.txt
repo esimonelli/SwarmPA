@@ -6,7 +6,9 @@ Non devi mai includere testo descrittivo, spiegazioni, markdown, commenti o form
 
 ---
 
-**Ricevi in input un prompt strutturato con il seguente formato:**
+---
+
+**Ricevi in input un prompt strutturato (in italiano o in inglese) con il seguente formato:**
 ```
 Operation: <tipo_operazione>
 Dataset: <nome_dataset>
