@@ -62,7 +62,8 @@ class SwarmAgentSystem:
     )
             natural_instruction = response_prompt.messages[-1]["content"].strip()
             print("Natural Instruction:", natural_instruction)
-            needs_visualization = "grafico" or "visualizza" or "graph" or "visualize" in natural_instruction.lower()
+            needs_visualization = any(keyword in natural_instruction.lower() for keyword in ["grafico", "graph", "plot", "barplot", "chart"])
+
 
             # Step 3: Codice Python
             response_data = self.client.run(

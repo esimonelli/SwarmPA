@@ -56,42 +56,44 @@ if "swarm_agent" not in st.session_state:
     st.session_state.chat_history = []
     st.session_state.last_semantic_prompt = None
 
-# Esempi suggeriti
+# Esempi suggeriti con selezione lingua
 with st.expander("Choose the language and see some examples 💡"):
-    # Selettore lingua
-    lingua = st.selectbox("Lingua degli esempi", ["Italiano 🇮🇹", "English 🇬🇧"], index=0, key="lingua_selector")
+    lingua = st.selectbox("Lingua degli esempi", ["Italiano", "English"], index=0, key="lingua_selector")
 
-    if lingua == "Italiano":
-        st.markdown("""
-        - "Qual è la media degli accrediti per le donne a Milano?"
-        - "E per gli uomini?"
-        - "Fammi un grafico della distribuzione degli accessi digitali al portale NoiPA diviso per regione"
-        - "Qual è la distribuzione dei dipendenti per fascia d'età e genere?"
-        - "Ora genera un barplot con split per genere della distribuzione appena calcolata"
-        - "Qual è la percentuale di uomini e donne per ogni fascia di reddito?"
-        - "Calcola la distribuzione percentuale delle modalità di accesso al portale NoiPA tra gli utenti di età compresa tra i 18 e i 30 anni rispetto a quelli di età superiore ai 50 anni, suddivisa per regione di residenza"
-        - "Identifica il metodo di pagamento più utilizzato per ciascuna fascia d'età e genera un grafico che mostri se esistono correlazioni tra genere e preferenza del metodo di pagamento"
-        - "Analizza i dati sui pendolari per identificare quali amministrazioni hanno la percentuale più alta di dipendenti che percorrono più di 20 miglia per recarsi al lavoro"
-        - "Confronta la distribuzione di genere del personale tra i cinque comuni con il maggior numero di dipendenti, evidenziando eventuali differenze significative nella rappresentanza per fascia d'età"
-        - "Determina se esiste una correlazione tra la modalità di accesso al portale e la distanza media percorsa per il tragitto casa-lavoro per ciascuna amministrazione"
-        """)
-    else:
-        st.markdown("""
-        - "What is the average salary payment for women in Milan?"
-        - "And for men?"
-        - "Show me a bar chart of digital access to the NoiPA portal broken down by region"
-        - "What is the employee distribution by age group and gender?"
-        - "Now generate a barplot split by gender for the previous distribution"
-        - "What is the percentage of men and women in each income bracket?"
-        - "Calculate the percentage distribution of access methods to the NoiPA portal among users aged 18–30 versus those over 50, split by region of residence"
-        - "Identify the most used payment method for each age group and generate a graph showing correlations between gender and payment preference"
-        - "Analyze commuter data to identify which administrations have the highest percentage of employees traveling more than 20 miles to work"
-        - "Compare gender distribution of staff among the top five municipalities with the highest number of employees, highlighting any significant differences by age group"
-        - "Determine whether there's a correlation between access method and average commuting distance for each administration"
-        """)
+    esempi = {
+        "Italiano": [
+            "Qual è la media degli accrediti per le donne a Milano?",
+            "E per gli uomini?",
+            "Fammi un grafico della distribuzione degli accessi digitali al portale NoiPA diviso per regione",
+            "Qual è la distribuzione dei dipendenti per fascia d'età e genere?",
+            "Ora genera un barplot con split per genere della distribuzione appena calcolata",
+            "Qual è la percentuale di uomini e donne per ogni fascia di reddito?",
+            "Calcola la distribuzione percentuale delle modalità di accesso al portale NoiPA tra gli utenti di età compresa tra i 18 e i 30 anni rispetto a quelli di età superiore ai 50 anni, suddivisa per regione di residenza",
+            "Identifica il metodo di pagamento più utilizzato per ciascuna fascia d'età e genera un grafico che mostri se esistono correlazioni tra genere e preferenza del metodo di pagamento",
+            "Analizza i dati sui pendolari per identificare quali amministrazioni hanno la percentuale più alta di dipendenti che percorrono più di 20 miglia per recarsi al lavoro",
+            "Confronta la distribuzione di genere del personale tra i cinque comuni con il maggior numero di dipendenti, evidenziando eventuali differenze significative nella rappresentanza per fascia d'età",
+            "Determina se esiste una correlazione tra la modalità di accesso al portale e la distanza media percorsa per il tragitto casa-lavoro per ciascuna amministrazione"
+        ],
+        "English": [
+            "What is the average salary payment for women in Milan?",
+            "And for men?",
+            "Show me a bar chart of digital access to the NoiPA portal broken down by region",
+            "What is the employee distribution by age group and gender?",
+            "Now generate a barplot split by gender for the previous distribution",
+            "What is the percentage of men and women in each income bracket?",
+            "Calculate the percentage distribution of access methods to the NoiPA portal among users aged 18–30 versus those over 50, split by region of residence",
+            "Identify the most used payment method for each age group and generate a graph showing correlations between gender and payment preference",
+            "Analyze commuter data to identify which administrations have the highest percentage of employees traveling more than 20 miles to work",
+            "Compare gender distribution of staff among the top five municipalities with the highest number of employees, highlighting any significant differences by age group",
+            "Determine whether there's a correlation between access method and average commuting distance for each administration"
+        ]
+    }
+
+    for esempio in esempi[lingua]:
+        st.markdown(f"- \"{esempio}\"")
 
 # Input utente
-user_input = st.chat_input("💬 Fai una domanda sui dati...")
+user_input = st.chat_input("💬 Fai una domanda sui dati/ ask something...")
 if user_input:
     with st.spinner("🤖 Sto elaborando la tua richiesta..."):
         result = st.session_state.swarm_agent.process_query(
@@ -99,7 +101,6 @@ if user_input:
             previous_prompt=st.session_state.last_semantic_prompt
         )
 
-    # Memorizza prompt e risultati
     st.session_state.last_semantic_prompt = user_input
     st.session_state.chat_history.append({
         "user": user_input,
