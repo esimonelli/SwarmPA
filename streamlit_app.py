@@ -5,27 +5,13 @@ from swarm_interface import SwarmAgentSystem
 
 st.set_page_config(page_title="(Demo) Multi-Agent NoiPA", layout="wide", page_icon="📊")
 
-# Logo opzionale
+# Logo opzionale (assicurati che sia presente il file Logo_Reply.png)
 logo_path = "Logo_Reply.png"
 if os.path.exists(logo_path):
     with open(logo_path, "rb") as f:
         logo_reply = base64.b64encode(f.read()).decode()
 else:
     logo_reply = ""
-
-# Lingua UI
-if "ui_language" not in st.session_state:
-    st.session_state.ui_language = "it"
-
-col1, col2 = st.columns([0.8, 0.2])
-with col1:
-    st.markdown(f"""
-    <div class="main-title">TriplePA – Multi-Agent System for Data Analysis in NoiPA</div>
-    """, unsafe_allow_html=True)
-with col2:
-    st.markdown("**Seleziona Lingua / Select Language**", unsafe_allow_html=True)
-    lang_choice = st.radio("", ["🇮🇹", "🇬🇧"], horizontal=True, label_visibility="collapsed")
-    st.session_state.ui_language = "it" if lang_choice == "🇮🇹" else "en"
 
 # Stili globali
 st.markdown(f"""
@@ -57,13 +43,12 @@ st.markdown(f"""
     .download-btn:hover {{ background-color: #1f8e4d; }}
 </style>
 <div class="header-container">
+    <div class="main-title">Multi-Agent System Data Analysis in NoiPA</div>
     <img class="logo-img" src="data:image/png;base64,{logo_reply}">
 </div>
 """, unsafe_allow_html=True)
 
-st.markdown("""
-<div class='subheader'>Multi-Agent System capable of analyzing Public Administration data in natural language: <b>Salaries</b>, <b>Income</b>, <b>Accesses</b>, <b>Commuting</b></div>
-""", unsafe_allow_html=True)
+st.markdown("<div class='subheader'>AI based System capable of analyzing Public Administration data in natural language: <b>Salaries</b>, <b>Income</b>, <b>Accesses</b>, <b>Commuting</b></div>", unsafe_allow_html=True)
 
 # Inizializzazione sistema agenti e stato memoria
 if "swarm_agent" not in st.session_state:
@@ -72,8 +57,11 @@ if "swarm_agent" not in st.session_state:
     st.session_state.last_semantic_prompt = None
 
 # Esempi suggeriti
-with st.expander("💡 Examples"):
-    if st.session_state.ui_language == "it":
+with st.expander("Choose the language and see some examples 💡"):
+    # Selettore lingua
+    lingua = st.selectbox("Lingua degli esempi", ["Italiano 🇮🇹", "English 🇬🇧"], index=0, key="lingua_selector")
+
+    if lingua == "Italiano":
         st.markdown("""
         - "Qual è la media degli accrediti per le donne a Milano?"
         - "E per gli uomini?"
@@ -89,22 +77,60 @@ with st.expander("💡 Examples"):
         """)
     else:
         st.markdown("""
-        - "What is the average number of credits for women in Milan?"
+        - "What is the average salary payment for women in Milan?"
         - "And for men?"
-        - "Create a chart showing the distribution of digital accesses to the NoiPA portal by region"
-        - "What is the distribution of employees by age group and gender?"
-        - "Now generate a barplot split by gender for the distribution just calculated"
+        - "Show me a bar chart of digital access to the NoiPA portal broken down by region"
+        - "What is the employee distribution by age group and gender?"
+        - "Now generate a barplot split by gender for the previous distribution"
         - "What is the percentage of men and women in each income bracket?"
-        - "Calculate the percentage distribution of portal access methods among users aged 18–30 compared to those over 50, by region of residence"
-        - "Identify the most used payment method for each age group and generate a chart showing correlations between gender and payment preference"
-        - "Analyze commuter data to identify which administrations have the highest percentage of employees commuting more than 20 miles to work"
-        - "Compare the gender distribution of staff in the five municipalities with the highest number of employees, highlighting significant differences by age group"
-        - "Determine whether there is a correlation between portal access mode and average commuting distance by administration"
+        - "Calculate the percentage distribution of access methods to the NoiPA portal among users aged 18–30 versus those over 50, split by region of residence"
+        - "Identify the most used payment method for each age group and generate a graph showing correlations between gender and payment preference"
+        - "Analyze commuter data to identify which administrations have the highest percentage of employees traveling more than 20 miles to work"
+        - "Compare gender distribution of staff among the top five municipalities with the highest number of employees, highlighting any significant differences by age group"
+        - "Determine whether there's a correlation between access method and average commuting distance for each administration"
         """)
+
+# Input utente
+user_input = st.chat_input("💬 Fai una domanda sui dati...")
+if user_input:
+    with st.spinner("🤖 Sto elaborando la tua richiesta..."):
+        result = st.session_state.swarm_agent.process_query(
+            user_input,
+            previous_prompt=st.session_state.last_semantic_prompt
+        )
+
+    # Memorizza prompt e risultati
+    st.session_state.last_semantic_prompt = user_input
+    st.session_state.chat_history.append({
+        "user": user_input,
+        "response": result["message"],
+        "type": result["type"],
+        "image": result.get("image_path")
+    })
+
+# Visualizzazione chat
+for entry in st.session_state.chat_history:
+    with st.chat_message("Utente"):
+        st.markdown(f"<div class='user-msg'>{entry['user']}</div>", unsafe_allow_html=True)
+
+    with st.chat_message("Agente"):
+        html_response = "<div class='agent-msg'>"
+        if entry["type"] == "visualization" and entry.get("image"):
+            image_path = entry["image"]
+            with open(image_path, "rb") as img_file:
+                img_data = base64.b64encode(img_file.read()).decode()
+            html_response += f"<img src='data:image/png;base64,{img_data}' style='width: 100%; border-radius: 6px; margin-bottom: 1em;' />"
+        html_response += f"{entry['response']}</div>"
+        st.markdown(html_response, unsafe_allow_html=True)
+
+        if entry["type"] == "visualization" and entry.get("image"):
+            with open(entry["image"], "rb") as img_file:
+                b64 = base64.b64encode(img_file.read()).decode()
+                href = f'<a class="download-btn" style="color: black;" href="data:image/png;base64,{b64}" download="grafico_generato.png">Scarica il grafico</a>'
+                st.markdown(f"<div style='text-align: center'>{href}</div>", unsafe_allow_html=True)
 
 # Footer
 st.markdown("""
 ---
 <center><small><i style='color:#888'>Powered by OpenAI · Swarm · LlamaIndex · Streamlit</i></small></center>
 """, unsafe_allow_html=True)
-

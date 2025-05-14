@@ -9,6 +9,7 @@ from utils.index_builder import build_or_load_index
 from utils.executor import execute_code
 from utils.llama_helper import extract_semantic_schema_from_index
 from langdetect import detect
+import streamlit as st
 import os
 
 
@@ -32,7 +33,7 @@ class SwarmAgentSystem:
         self.data_agent = build_data_agent(self.metadata_prompt)
 
     def process_query(self, user_input, previous_prompt=None):
-        user_language = detect(user_input)[:2]  # → 'en' or 'it'
+        user_language = st.session_state.get("ui_language", detect(user_input)[:2])  # → 'en' or 'it'
         if previous_prompt:
             combined_input = f"Domanda precedente:\n{previous_prompt}\n\nNuova richiesta:\n{user_input}"
         else:
