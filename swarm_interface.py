@@ -68,23 +68,23 @@ class SwarmAgentSystem:
 
             dataframe_result = execute_code(generated_code)
 
-            if dataframe_result is None or (hasattr(dataframe_result, 'empty') and dataframe_result.empty):
-                print("Nessun risultato. Riprovo a elaborare nuovamente.")
+            #if dataframe_result is None or (hasattr(dataframe_result, 'empty') and dataframe_result.empty):
+                #print("Nessun risultato. Riprovo a elaborare nuovamente.")
 
-            retry_input = f"{user_input}\n\n[NOTA: primo tentativo fallito. Riscrivi la richiesta in forma più generica o semplificata mantenendo il significato.]"
+            #retry_input = f"{user_input}\n\n[NOTA: primo tentativo fallito. Riscrivi la richiesta in forma più generica o semplificata mantenendo il significato.]"
     
             # Conversational Agent rigenera 
-            response_retry = self.client.run(agent=self.conversational_agent, messages=[{"role": "user", "content": retry_input}])
-            structured_retry = response_retry.messages[-1]["content"]
+            #response_retry = self.client.run(agent=self.conversational_agent, messages=[{"role": "user", "content": retry_input}])
+            #structured_retry = response_retry.messages[-1]["content"]
 
             # Prompt Engine rigenera
-            response_retry_prompt = self.client.run(agent=prompt_engine, messages=[{"role": "user", "content": structured_retry}])
-            natural_retry = response_retry_prompt.messages[-1]["content"]
+            #response_retry_prompt = self.client.run(agent=prompt_engine, messages=[{"role": "user", "content": structured_retry}])
+            #natural_retry = response_retry_prompt.messages[-1]["content"]
 
             # Data Agent rigenera codice
-            response_data_retry = self.client.run(agent=self.data_agent, messages=[{"role": "user", "content": natural_retry}])
-            retry_code = response_data_retry.messages[-1]["content"]
-            dataframe_result = execute_code(retry_code)
+            #response_data_retry = self.client.run(agent=self.data_agent, messages=[{"role": "user", "content": natural_retry}])
+            #retry_code = response_data_retry.messages[-1]["content"]
+            #dataframe_result = execute_code(retry_code)
 
 
             if dataframe_result is None:
