@@ -35,7 +35,7 @@ class SwarmAgentSystem:
     def process_query(self, user_input, previous_prompt=None):
         user_language = st.session_state.get("ui_language", detect(user_input)[:2])  # → 'en' or 'it'
         if previous_prompt:
-            combined_input = f"Domanda precedente:\n{previous_prompt}\n\nNuova richiesta:\n{user_input}"
+            combined_input = f"Domanda precedente :\n{previous_prompt}\n\nNuova richiesta:\n{user_input}"
         else:
             combined_input = user_input
         try:
