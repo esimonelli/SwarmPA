@@ -12,6 +12,8 @@
 **Master’s Degree in Data Science and Management**  
 LUISS Guido Carli – A.Y. 2024/2025
 
+Streamlit-App-Interface of SwarmPA : **(https://triple3-crmjzrz8kam6aqktg9sjmw.streamlit.app/)**
+
 # 1 - Introduction
 
 SwarmPA is a multi-agent system developed as part of the Machine Learning course (A.Y. 2024/2025) at LUISS Guido Carli, in collaboration with Reply SpA. The project addresses a real-world challenge in the public sector: enabling intuitive, efficient, and explainable access to complex datasets from the Italian Public Administration (PA). These datasets contain rich, granular information about salary distributions, commuting patterns, income brackets, and digital access behaviors of public employees. However, navigating such data typically requires technical expertise and familiarity with programming tools—skills that most public sector workers do not possess.
@@ -137,7 +139,7 @@ The figure below provides a detailed illustration of the entire workflow, from i
 
 # User Interface
 
-The system is accessible through a user-friendly web interface built with Streamlit (https://triple3-rfr6bswwrbu2wpqfgwvwag.streamlit.app/). Users can input their queries in natural language and receive instant feedbacks:
+The system is accessible through a user-friendly web interface built with Streamlit **(https://triple3-crmjzrz8kam6aqktg9sjmw.streamlit.app/)**. Users can input their queries in natural language and receive instant feedbacks:
 (Reccomended *Dark-Mode* in your laptop)
 
 ![User Interface](images/streamlit.png)
