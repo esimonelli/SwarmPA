@@ -187,15 +187,50 @@ These limitations—especially regarding scalability, transparency of logic, and
 
 ---
 
+
 ## Optional Enhancements and Design Challenges
 
-<<<<<<< HEAD
-- **Memory Support**: Inspired by LangChain’s token memory, attempts were made to integrate `ConversationTokenBufferMemory` into Swarm agents. However, Swarm does not support memory injection natively, and integration caused runtime conflicts. As a workaround, a **temporary memory mechanism** called `combined_input` was implemented, which prepends previous instructions from the prompt engine `natural_instruction` to new ones `user_input`in a controlled and coherent format.
-=======
-- **Memory Support**: Inspired by LangChain’s token memory, attempts were made to integrate `ConversationTokenBufferMemory` into Swarm agents. However, Swarm does not support memory injection natively, and integration caused runtime conflicts. As a workaround, a temporary memory mechanism called combined_input was implemented, which prepends previous instructions from the prompt engine natural_instruction to new ones user_inputin a controlled and coherent format.
->>>>>>> e14597e1 (OVERFITTED STALLIONS)
+- **Memory Support**: Inspired by LangChain’s token memory, attempts were made to integrate `ConversationTokenBufferMemory` into Swarm agents. However, Swarm does not support memory injection natively, and integration caused runtime conflicts. As a workaround, a temporary memory mechanism called combined_input was implemented, which prepends previous instructions from the previous input user to new ones in a controlled and coherent format.
 - **Fallback Logic**: A recovery pipeline was also tested—where failed code generation would trigger a reformulated prompt and a second attempt. However, this retry logic introduced new ambiguity and occasionally reduced stability. It was ultimately removed for robustness.
+- **Multilingual Input Support**: To improve accessibility and user-friendliness, especially for the target users (Italian public employees and analysts), multilingual support was implemented using the `langdetect` library. The system automatically detects whether the input language is Italian or English and passes this information to both the Prompt Engine and the Explanation Agent. This allows the system to generate fully coherent responses in the same language as the original query, ensuring a seamless and adaptive interaction experience across linguistic contexts.
+
 
 ---
 
 SwarmPA therefore represents a **second-generation agentic system**, where the lessons of the LangChain-based prototype were refined into a clearer, more powerful architecture. Its agent-based prompt orchestration, semantic parsing, dynamic code generation, and explanation logic all contribute to a system that is not only functional, but also transparent, extensible, and aligned with modern LLM best practices.
+
+
+## 3- Experimental Design
+
+To evaluate the reliability and robustness of our multi-agent system, we designed an extensive empirical experiment involving over **60 diverse user queries**, spanning all four datasets provided. These queries ranged from simple statistical aggregations to complex multi-dataset comparisons, including natural language questions requesting visualizations, percentage breakdowns, trend analyses, and correlations.
+
+### Purpose
+
+The goal of the experiment was to validate the correctness, analytical depth, and response quality of the multi-agent architecture under realistic usage scenarios, particularly when faced with semantically rich prompts.
+
+### Baseline(s)
+
+To assess the accuracy of the results, we employed a **manual baseline** consisting of hand-written Python code built. This code was used to produce reference answers against which we could compare the outputs of our system. In addition, we queried **ChatGPT** directly using the same prompts to establish a comparative benchmark on response completeness and correctness.
+
+### Evaluation Metrics
+
+We evaluated the system according to the following metrics:
+
+- **Correctness**: Does the output match the expected result from our reference Python code?
+- **Completeness**: Are all aspects of the user's question addressed, including filters, metrics, and breakdowns?
+- **Explanation Quality**: Is the output well-structured and informative in its interpretation of data?
+- **Visualization Appropriateness**: When graphs are requested, are they semantically aligned with the the question, the dataand clearly presented?
+- **Resilience to Complexity**: How well does the system handle multi-dataset questions and semantically rich follow-ups?
+
+Each query was manually reviewed and scored using the above dimensions. The system showed particularly strong performance in producing **structured explanations**, outperforming ChatGPT in the clarity and domain-specific accuracy of its responses, thanks to its specialized agent design.
+
+
+### Limitations Observed
+
+While the system performs robustly across a wide range of queries, we observed some **occasional limitations** in two key areas:
+
+1. **Response Latency**: In certain cases — especially with more specific or elaborate queries involving visualizations — the system response time may extend to several tens of seconds. This is due to the execution of a multi-step pipeline, which includes semantic parsing, code generation, execution, and rendering of the output. Additional latency may come from the Streamlit interface, which adds a minor overhead during visualization. Although not critical, this is an area where **minor optimizations could further enhance responsiveness**.
+
+2. **Handling Highly Complex and Multi-Dataset Questions**: In some specific cases, the system may **struggle to resolve queries** that involve intricate semantic compositions or require merging data from multiple datasets. These challenges can stem from **semantic interpretation ambiguities**, **parsing errors**, or **imperfect merge logic** — issues that are non-trivial and are also **challenging for baseline tools**. While such cases are infrequent, they offer valuable insight into how the system could be refined through more advanced validation and semantic alignment mechanisms.
+
+Despite these issues, the multi-agent architecture demonstrates excellent **accuracy, modularity, and domain awareness**, making it a **solid foundation** for professional-level data analysis and a promising candidate for further enhancement.
