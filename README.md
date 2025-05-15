@@ -163,6 +163,10 @@ The system is designed to work with four representative datasets from the Italia
 3. **Digital Access**: Records of public employees accessing online government services (SPID, CIE, etc.).
 4. **Commuting**: Data about work-site proximity, administrative units, and estimated distances for employees.
 
+A preliminary **Exploratory Data Analysis (EDA)** was performed on all datasets and is available in the project repository `Agents_ML_EDA.ipynb` . This step allowed the team to understand the distributions and define metadata mappings for semantic alignment.
+
+No major transformations were applied to the original datasets to preserve their authenticity. However, a single normalization was introduced: for age-based analyses, the **maximum age threshold was capped at 100 years**, to mitigate the impact of outliers and ensure consistency in demographic groupings.
+
 These datasets are semantically indexed using LlamaIndex to ensure efficient querying and analysis.
 
 ---
