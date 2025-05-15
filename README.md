@@ -189,7 +189,11 @@ These limitations—especially regarding scalability, transparency of logic, and
 
 ## Optional Enhancements and Design Challenges
 
+<<<<<<< HEAD
 - **Memory Support**: Inspired by LangChain’s token memory, attempts were made to integrate `ConversationTokenBufferMemory` into Swarm agents. However, Swarm does not support memory injection natively, and integration caused runtime conflicts. As a workaround, a **temporary memory mechanism** called `combined_input` was implemented, which prepends previous instructions from the prompt engine `natural_instruction` to new ones `user_input`in a controlled and coherent format.
+=======
+- **Memory Support**: Inspired by LangChain’s token memory, attempts were made to integrate `ConversationTokenBufferMemory` into Swarm agents. However, Swarm does not support memory injection natively, and integration caused runtime conflicts. As a workaround, a temporary memory mechanism called combined_input was implemented, which prepends previous instructions from the prompt engine natural_instruction to new ones user_inputin a controlled and coherent format.
+>>>>>>> e14597e1 (OVERFITTED STALLIONS)
 - **Fallback Logic**: A recovery pipeline was also tested—where failed code generation would trigger a reformulated prompt and a second attempt. However, this retry logic introduced new ambiguity and occasionally reduced stability. It was ultimately removed for robustness.
 
 ---
