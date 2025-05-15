@@ -11,12 +11,19 @@ from agents.prompt_engine import prompt_engine
 from agents.visualization_agent import visualization_agent
 from agents.explanation_agent import explanation_agent
 import os
+from dotenv import load_dotenv
+load_dotenv()
 
+#benvenuto in questo sistema multi-agente
+
+#TRIPLE 3 è un sistema di agenti multi-agente progettato per analizzare i dati della Pubblica Amministrazione in linguaggio naturale. 
+#È in grado di elaborare domande relative a stipendi, redditi, accessi e spostamenti, fornendo risposte dettagliate e visualizzazioni grafiche.
+
+
+# - Saluti, Overfitted Stallions
 
 if __name__ == "__main__":
     system = SwarmAgentSystem()
     system.run_console()
 
-from dotenv import load_dotenv
-load_dotenv()
 

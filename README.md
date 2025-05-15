@@ -5,9 +5,9 @@
 
 
 ## Team Members
-- **Chiara Canali** – Team Captain (ID: 800xxx)
-- Leonardo Risica (ID: 800xxx)
-- Emiliano Simonelli (ID: 800xxx)
+- Chiara Canali – Captain (ID: 800031)
+- Leonardo Risica (ID: 803741)
+- Emiliano Simonelli (ID: 800171)
 
 **Master’s Degree in Data Science and Management**  
 LUISS Guido Carli – A.Y. 2024/2025
@@ -83,7 +83,7 @@ The system relies on five agents plus an execution tool:
 To ensure full reproducibility and clarity, this section outlines the setup instructions and the overall code structure of the system.
 
 
-The project requires Python 3.10+ and can be set up using `venv` with `pip` and install all the requirements needed (`requirements.txt`). Below the instructions:
+The project requires **Python 3.10+** (**!**)  and can be set up using `venv` with `pip` and install all the requirements needed (`requirements.txt`). Below the instructions:
 
 
 
@@ -93,7 +93,7 @@ The project requires Python 3.10+ and can be set up using `venv` with `pip` and 
     source .venv/bin/activate  # On Windows: .venv\Scripts\activate
     pip install -r requirements.txt
 
-> API keys such as OpenAI's should be stored in a `.env` file and loaded automatically using the `python-dotenv` package.
+> API keys such as OpenAI's should be stored in a `.env` file and loaded automatically using the `python-dotenv` package. (we removed only the key but the .env is already there, you only have to insert the key in this way "OPENAI_API_KEY=sk-proj-q...." )
 
 ---
 
@@ -135,14 +135,23 @@ The figure below provides a detailed illustration of the entire workflow, from i
 
 ---
 
-### User Interface
+# User Interface
 
 The system is accessible through a user-friendly web interface built with Streamlit (https://triple3-rfr6bswwrbu2wpqfgwvwag.streamlit.app/). Users can input their queries in natural language and receive instant feedbacks:
+(Reccomended *Dark-Mode* in your laptop)
 
 ![User Interface](images/streamlit.png)
-![User Interface](images/streamlit2.png)
+
+The interface is designed to be user-friendly: the user can select the preferred language and take inspiration from example queries provided in both Italian and English.
+
+![User Interface](images/example_query.png)
 
 The interface provides a chat-like experience, allowing users to interact with the system in a conversational manner. It also supports downloading generated charts and explanations as PNG files.
+
+
+![User Interface](images/download.png)
+
+
 
 ---
 
@@ -161,7 +170,7 @@ These datasets are semantically indexed using LlamaIndex to ensure efficient que
 
 ### Comparison with the Legacy System
 
-The development of SwarmPA was preceded by an earlier architecture based on **LangChain**, available at [emisimonelli/agents](https://github.com/emisimonelli/agents). The initial system was functional and technically solid, demonstrating many advanced capabilities:
+The development of SwarmPA was preceded by an earlier architecture based on **LangChain**, available at [esimonelli/agents](https://github.com/emisimonelli/agents). The initial system was functional and technically solid, demonstrating many advanced capabilities:
 
 **Strengths of the legacy project:**
 - Integrated memory (via `ConversationTokenBufferMemory`)
@@ -194,13 +203,17 @@ These limitations—especially regarding scalability, transparency of logic, and
 - **Fallback Logic**: A recovery pipeline was also tested—where failed code generation would trigger a reformulated prompt and a second attempt. However, this retry logic introduced new ambiguity and occasionally reduced stability. It was ultimately removed for robustness.
 - **Multilingual Input Support**: To improve accessibility and user-friendliness, especially for the target users (Italian public employees and analysts), multilingual support was implemented using the `langdetect` library. The system automatically detects whether the input language is Italian or English and passes this information to both the Prompt Engine and the Explanation Agent. This allows the system to generate fully coherent responses in the same language as the original query, ensuring a seamless and adaptive interaction experience across linguistic contexts.
 
+We directly implemented the Multilingual Support into the interface, where the user can select the language and see the example questions switched in the selected language (it/eng):
+
+![User Interface](images/lang_detect.png)
+
 
 ---
 
 SwarmPA therefore represents a **second-generation agentic system**, where the lessons of the LangChain-based prototype were refined into a clearer, more powerful architecture. Its agent-based prompt orchestration, semantic parsing, dynamic code generation, and explanation logic all contribute to a system that is not only functional, but also transparent, extensible, and aligned with modern LLM best practices.
 
 
-## 3- Experimental Design
+# 3- Experimental Design
 
 To evaluate the reliability and robustness of our multi-agent system, we designed an extensive empirical experiment involving over **60 diverse user queries**, spanning all four datasets provided. These queries ranged from simple statistical aggregations to complex multi-dataset comparisons, including natural language questions requesting visualizations, percentage breakdowns, trend analyses, and correlations.
 
@@ -208,7 +221,7 @@ To evaluate the reliability and robustness of our multi-agent system, we designe
 
 The goal of the experiment was to validate the correctness, analytical depth, and response quality of the multi-agent architecture under realistic usage scenarios, particularly when faced with semantically rich prompts.
 
-### Baseline(s)
+### Baseline
 
 To assess the accuracy of the results, we employed a **manual baseline** consisting of hand-written Python code built. This code was used to produce reference answers against which we could compare the outputs of our system. In addition, we queried **ChatGPT** directly using the same prompts to establish a comparative benchmark on response completeness and correctness.
 
@@ -229,8 +242,77 @@ Each query was manually reviewed and scored using the above dimensions. The syst
 
 While the system performs robustly across a wide range of queries, we observed some **occasional limitations** in two key areas:
 
-1. **Response Latency**: In certain cases — especially with more specific or elaborate queries involving visualizations — the system response time may extend to several tens of seconds. This is due to the execution of a multi-step pipeline, which includes semantic parsing, code generation, execution, and rendering of the output. Additional latency may come from the Streamlit interface, which adds a minor overhead during visualization. Although not critical, this is an area where **minor optimizations could further enhance responsiveness**.
+1. **Response Latency**: In certain cases — especially with more specific or elaborate queries involving visualizations — the system response time may extend to 25-30 seconds. This is due to the execution of a multi-step pipeline, which includes semantic parsing, code generation, execution, and rendering of the output. Additional latency may come from the Streamlit interface, which adds a minor overhead during visualization. Although not critical, this is an area where **minor optimizations could further enhance responsiveness**.
 
 2. **Handling Highly Complex and Multi-Dataset Questions**: In some specific cases, the system may **struggle to resolve queries** that involve intricate semantic compositions or require merging data from multiple datasets. These challenges can stem from **semantic interpretation ambiguities**, **parsing errors**, or **imperfect merge logic** — issues that are non-trivial and are also **challenging for baseline tools**. While such cases are infrequent, they offer valuable insight into how the system could be refined through more advanced validation and semantic alignment mechanisms.
 
 Despite these issues, the multi-agent architecture demonstrates excellent **accuracy, modularity, and domain awareness**, making it a **solid foundation** for professional-level data analysis and a promising candidate for further enhancement.
+
+# 4 - Results
+
+To quantify the system’s effectiveness, we analyzed a subset of **35 annotated test queries**, evaluated across multiple quality dimensions. These were compiled into the Excel file:
+
+`results/EVALUATIONS.xlsx`
+
+The test questions span a variety of domains (salary, access, commuting, income brackets) and include both simple and advanced analytical prompts. Each answer was manually scored for its alignment with a reference answer and rated based on explanation quality and visualization relevance.
+
+### Performance Summary
+
+The table below summarizes the key performance indicators:
+
+| Metric                     | Value                     |
+|----------------------------|----------------------------|
+| Accuracy (perfect answers) | **~83%**         |
+| Average Quality Score     | **1.79 / 2.00**              |
+
+
+These results highlight a robust architecture capable of handling a wide range of queries with high reliability and fluency. The few errors observed occurred primarily in edge cases that combine:
+
+- syntactic ambiguity
+- implicit complex multi-dataset joins questions
+
+Despite these challenges, the agentic pipeline consistently delivered coherent, well-structured, and domain-aware explanations.
+
+
+### Official Questions by Reply
+
+In addition to our internal tests, a separate batch of **official questions was provided by Reply SpA**. These questions were tested using the Streamlit interface and their results were collected via screenshots.
+
+### Q1
+
+![Question 1](results/Questions%20From%20Reply/Question1.png)
+
+
+### Q2
+
+![Question 2](results/Questions%20From%20Reply/Question2-part1.png)
+
+![Question 2](results/Questions%20From%20Reply/Question2-part2.png)
+
+
+All the other screeshotted answers are collected into the folder "results" (`results/Questions From Reply/`)
+The system responded correctly and comprehensively to all test prompts from Reply, with particular strength in:
+
+- understanding institutional language
+- adapting to domain-specific Italian semantics
+- generating insightful explanations and accurate visual summaries
+
+#### Focus: Stress Test - Q5
+
+One particularly **challenging case (Q5)** asked for a correlation between a **categorical** and a **numeric** variable—specifically involving the commuting distance (`distance_max_KM`) which may contain `"inf"` values. This query had to be **rephrased** to avoid misleading results or failures in code execution. It served as an excellent stress test for validating system robustness in edge-case scenarios.
+
+# 5 - Conclusions
+
+SwarmPA stands as a compelling example of how agentic AI can be effectively applied to real-world challenges in the public sector. Through the modular coordination of specialized LLM-powered agents, the system successfully transforms free-form natural language queries into structured, interpretable insights—delivered both as explanatory text and as professional-grade visualizations. The adoption of the Swarm framework, with its prompt-based orchestration and semantic alignment mechanisms, allowed our team to build a pipeline that is both technically robust and conceptually transparent.
+
+This project not only demonstrated the practical value of agent decomposition in a data analysis context, but also advanced the pedagogical objective of applying Machine Learning to unstructured human-computer interactions. By incorporating components such as a Prompt Engine, a secure code executor, and an expert explanation agent, SwarmPA exemplifies the integration of reasoning, execution, and explainability—three pillars of trustworthy AI systems. The architectural improvements over the legacy LangChain-based solution clearly reflect the team's growing expertise in multi-agent design, as well as a thoughtful attention to usability, domain adaptation, and evaluation rigor.
+
+Empirical results from over 60 queries—validated both manually and with reference baselines—confirmed the system’s high accuracy, clarity, and resilience to semantic complexity. Minor limitations were observed only in queries involving complex multi-dataset joins or ambiguous constructs, but even in these cases, SwarmPA handled failure gracefully and maintained consistent behavior.
+
+Looking ahead, several promising directions emerge for future development. These include the integration of temporal memory for conversational continuity, optimization of execution latency, expansion to multilingual capabilities, and deployment in real-world public institutions with real-time datasets.
+
+In conclusion, SwarmPA proves that agent-based AI is not just a theoretical framework, but a powerful design paradigm for building intelligent, modular, and human-aligned systems. 
+
+Best regards,
+
+Overfitted Stallions.

@@ -121,7 +121,6 @@ result.values per accedere ai valori
    - un messaggio chiaro di interpretazione (“esiste una forte/buona/discreta/debole correlazione positiva tra…”)
 
    Esempi di tecniche:
-   - Pearson → tra numerica e binaria (dummies)
    - ANOVA / Kruskal-Wallis → se vuoi testare se la variabile numerica cambia significativamente tra gruppi
 
    ATTENZIONE: Non usare LabelEncoder per variabili categoriche non ordinali se devi calcolare correlazioni.
