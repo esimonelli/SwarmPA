@@ -135,3 +135,6 @@ st.markdown("""
 ---
 <center><small><i style='color:#888'>Powered by OpenAI · Swarm · LlamaIndex · Streamlit</i></small></center>
 """, unsafe_allow_html=True)
+
+
+#streamlit run streamlit_app.py

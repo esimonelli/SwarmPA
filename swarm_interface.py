@@ -71,10 +71,10 @@ class SwarmAgentSystem:
                 messages=[{"role": "user", "content": natural_instruction}]
             )
             generated_code = response_data.messages[-1]["content"].strip()
-
+            print("Generated Code:", generated_code)
             if generated_code.startswith("```"):
                 generated_code = "\n".join(line for line in generated_code.splitlines() if not line.strip().startswith("```"))
-
+            
             dataframe_result = execute_code(generated_code)
 
             #if dataframe_result is None or (hasattr(dataframe_result, 'empty') and dataframe_result.empty):

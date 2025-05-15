@@ -81,26 +81,6 @@ Unisci dataset solo se esistono **colonne compatibili presenti in entrambi**. I 
 - `provincia_della_sede` ⇄ `provincia_della_sede`
 - `sesso`, `eta_min`, `eta_max` ⇄ presenti in tutti i dataset e sempre compatibili
 
-# === MULTI-DATASET ANALYSIS ===
-# Se la richiesta richiede un’analisi su più dataset (es. correlazioni tra accesso digitale, redditi, mobilità, modalità di pagamento),
-# applica la seguente logica:
-
-1. IDENTIFICAZIONE DELLE ENTITÀ CHIAVE:
-- Usa `amministrazione_appartenenza` ↔ `ente` per unire Accesso e Pendolarismo
-- Usa `amministrazione_appartenenza` ↔ `amministrazione`, unendo per età e sesso se presenti, per Accesso ↔ Stipendi
- - Usa `regione_residenza_domicilio` ↔ `regione_residenza`, `sesso`, `eta_min/max` per Accesso o Stipendi ↔ Redditi
-- Usa `comune_della_sede` per unire Stipendi e Pendolarismo
-- Considera solo osservazioni che matchano su tutte le chiavi richieste (escludi i NaN dopo il merge)
-- Se sono richieste ricerhe incrociate il tuo primo obiettivo è unire i dati in un'unico dataset (pronto per poi lavorarci ulteriormente)
-- Se l'utente chiede confronti tra comuni, regioni, comparti o amministrazioni, puoi combinare i dataset usando `merge()` o filtri paralleli
-- Per fare il merge in studi tra i dataset pendolarismo e accesso amministrati Unisci i due dataset sulle amministrazioni corrispondenti, tenendo solo quelle in comune.
-- Se l'utente chiede di fare confronti tra dataset cerca sempre di trovare una colonna comune, se questa colonna comune non c'è costuiscila te (Ad esempio per confrontare Pendolarismo e Accessi usa Ente e amministrazione_appartenenza ed elimina ciò che non è uguale) 
-- Esempio: per sapere quanti amministrati residenti in Abruzzo lavorano fuori regione → unisci Pendolarismo e Reddito.
-- Esempio: per sapere il numero medio di accrediti per comparto → unisci Stipendi e Reddito filtrando per comparto.
-- Usa sempre `.str.lower().str.strip()` nei confronti testuali e verifica che i valori esistano nei dati.
-- Se la query contiene "amministrazioni" e "regione", usa EntryAccessoAmministrati_202501.csv
-- Se la query contiene "comparti" o "settori" e "regione", usa EntryAmministratiPerFasciaDiReddito_202501.csv
- 
  
 Non è mai consentito:
 - Unire livelli geografici diversi (es. `comune` con `regione`)
