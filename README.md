@@ -269,8 +269,8 @@ The table below summarizes the key performance indicators:
 | Metric                     | Value                     |
 |----------------------------|----------------------------|
 | Accuracy (perfect answers) | **~92%** (31 on 34)         |
-| Output quality      | **~89%** 30 on 34             |
-| Visualizations (if needed) | **100%**               |
+| Output quality      | **~89%** (30 on 34)             |
+| Visualizations (if needed) |  **100%**              |
 
 
 These results highlight a robust architecture capable of handling a wide range of queries with high reliability and fluency. The few errors observed occurred primarily in edge cases that combine:
