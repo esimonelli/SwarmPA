@@ -5,9 +5,9 @@
 
 
 ## Team Members
-- Chiara Canali – Captain (ID: 800031)
-- Leonardo Risica (ID: 803741)
-- Emiliano Simonelli (ID: 800171)
+- Chiara Canali 
+- Leonardo Risica 
+- Emiliano Simonelli 
 
 **Master’s Degree in Data Science and Management**  
 LUISS Guido Carli – A.Y. 2024/2025
